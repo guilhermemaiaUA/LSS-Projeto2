@@ -1,4 +1,4 @@
-# IoT Environmental Monitoring System: End-to-End Simulation
+# [IoT Environmental Monitoring System]
 ## Infrastructure Orchestration & Real-Time Data Pipeline
 
 This project provides a production-grade, fully containerized implementation of an **IoT Environmental Monitoring System**. By deploying a highly resilient microservice architecture, the system orchestrates simulated edge devices, a central Message Queuing Telemetry Transport (MQTT) broker, a backend ingestion pipeline, a relational time-series storage schema, and an automated visualization frontend.
@@ -42,7 +42,6 @@ The platform is engineered using five decoupled, specialized services that commu
 
 ```
 .
-├── assets/                                 # Documentation media, system charts, and UI screenshots
 ├── collector/                              # Backend Ingestion Layer Microservice
 │   ├── collector.py                        # High-resilience Python ingestion worker daemon
 │   ├── Dockerfile                          # Multi-stage lightweight python runtime build file
@@ -185,3 +184,9 @@ docker compose down -v
 ```
 
 > **Warning:** The `-v` flag deletes the `db_data` volume block, erasing all historical logged data records.
+
+## Authors
+
+[Iury Figueredo](https://github.com/IuryFigueredo) (N. 132655)
+
+[Guilherme Maia](https://github.com/guilhermemaiaUA) (N. 117596)
