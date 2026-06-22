@@ -1,0 +1,25 @@
+# =================================================================
+#  Grafana Automated Datasource Provisioning - LSS Project
+#  This file configures the relational PostgreSQL database engine
+#  as an active system data source upon initial container boot.
+# =================================================================
+
+apiVersion: 1
+
+datasources:
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    # Bind the connection network URL to the internal compose service DNS alias
+    url: database:5432
+    user: ${DB_USER}
+    secureJsonData:
+      password: ${DB_PASSWORD}
+    database: ${DB_NAME}
+    jsonData:
+      sslmode: "disable" # SSL disabled for localized bridge network development
+      encrypt: "never"
+      postgresVersion: 15
+      timescaledb: false
+    isDefault: true
+    editable: false # Lock configurations to ensure grading replication immutability

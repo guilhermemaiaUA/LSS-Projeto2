@@ -1,0 +1,233 @@
+{
+    "annotations": {
+        "list": [
+            {
+                "builtIn": 1,
+                "datasource": {
+                    "type": "grafana",
+                    "uid": "-- Grafana --"
+                },
+                "enable": true,
+                "hide": true,
+                "name": "Annotations & Alerts",
+                "type": "dashboard"
+            }
+        ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 1,
+    "id": null,
+    "links": [],
+    "liveNow": true,
+    "panels": [
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 8,
+                "w": 24,
+                "x": 0,
+                "y": 0
+            },
+            "id": 1,
+            "title": "IoT Environment Telemetry Analytics - Time Series Matrix",
+            "description": "LSS Project: Main dynamic visualization mapping temperature, humidity, and air quality indexes historically over a shared time axis.",
+            "type": "timeseries",
+            "datasource": {
+                "type": "postgres",
+                "uid": "PostgreSQL"
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "PostgreSQL"
+                    },
+                    "editorMode": "code",
+                    "format": "time_series",
+                    "rawQuery": true,
+                    "rawSql": "SELECT timestamp AS \"time\", value, sensor_type AS metric FROM sensor_data WHERE $__timeFilter(timestamp) ORDER BY timestamp ASC;",
+                    "refId": "A"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "custom": {
+                        "drawStyle": "line",
+                        "lineInterpolation": "smooth",
+                        "lineWidth": 2,
+                        "showPoints": "auto"
+                    },
+                    "color": {
+                        "mode": "palette-classic"
+                    }
+                }
+            }
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 6,
+                "w": 8,
+                "x": 0,
+                "y": 8
+            },
+            "id": 2,
+            "title": "Latest Temperature Reading",
+            "description": "LSS Project: Isolated instant query tracking the absolute most recent temperature parameter payload emitted by the edge node layer.",
+            "type": "stat",
+            "datasource": {
+                "type": "postgres",
+                "uid": "PostgreSQL"
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "PostgreSQL"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT value FROM sensor_data WHERE sensor_type = 'temperature' ORDER BY timestamp DESC LIMIT 1;",
+                    "refId": "B"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "celsius",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "red",
+                                "value": 35
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 6,
+                "w": 8,
+                "x": 8,
+                "y": 8
+            },
+            "id": 3,
+            "title": "Latest Humidity Level",
+            "description": "LSS Project: Isolated instant query tracking the absolute most recent volumetric humidity percentage payload emitted by the edge node layer.",
+            "type": "stat",
+            "datasource": {
+                "type": "postgres",
+                "uid": "PostgreSQL"
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "PostgreSQL"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT value FROM sensor_data WHERE sensor_type = 'humidity' ORDER BY timestamp DESC LIMIT 1;",
+                    "refId": "C"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "percent",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "blue",
+                                "value": null
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "collapsed": false,
+            "gridPos": {
+                "h": 6,
+                "w": 8,
+                "x": 16,
+                "y": 8
+            },
+            "id": 4,
+            "title": "Latest Air Quality (AQI)",
+            "description": "LSS Project: Isolated instant query tracking the absolute most recent Air Quality Index metric payload emitted by the edge node layer.",
+            "type": "stat",
+            "datasource": {
+                "type": "postgres",
+                "uid": "PostgreSQL"
+            },
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "postgres",
+                        "uid": "PostgreSQL"
+                    },
+                    "editorMode": "code",
+                    "format": "table",
+                    "rawQuery": true,
+                    "rawSql": "SELECT value FROM sensor_data WHERE sensor_type = 'air_quality' ORDER BY timestamp DESC LIMIT 1;",
+                    "refId": "D"
+                }
+            ],
+            "fieldConfig": {
+                "defaults": {
+                    "unit": "none",
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": null
+                            },
+                            {
+                                "color": "orange",
+                                "value": 100
+                            },
+                            {
+                                "color": "red",
+                                "value": 250
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "refresh": "5s",
+    "schemaVersion": 38,
+    "style": "dark",
+    "tags": [
+        "LSS",
+        "IoT"
+    ],
+    "time": {
+        "from": "now-5m",
+        "to": "now"
+    },
+    "timepicker": {
+        "refresh_intervals": [
+            "5s",
+            "10s",
+            "30s"
+        ]
+    },
+    "timezone": "utc",
+    "title": "IoT Environment Control Panel",
+    "version": 1
+}

@@ -1,0 +1,90 @@
+# ======================================================
+#  Infrastructure Orchestration Definition - LSS Project
+#  This file configures and provisions the entire container
+#  stack including broker, database, edge apps, and UI.
+# ======================================================
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto
+    # Port exposure removed for backend broker network isolation
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - iot_network
+    # Healthcheck to verify the broker is actively routing packets
+    healthcheck:
+      test: [ "CMD-SHELL", "mosquitto_sub -t '$$SYS/#' -C 1 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  database:
+    image: postgres:15
+    container_name: database
+    # Binding environmental variables safely from the hidden local file
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - iot_network
+    # Healthcheck blocks dependent apps until SQL sockets accept queries
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  sensors:
+    build: ./sensors
+    container_name: sensors
+    env_file:
+      - .env
+    # Enforces startup synchronization based on container state
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+    networks:
+      - iot_network
+
+  collector:
+    build: ./collector
+    container_name: collector
+    env_file:
+      - .env
+    # Prevents runtime crashes by delaying ingestion startup
+    depends_on:
+      mosquitto:
+        condition: service_healthy
+      database:
+        condition: service_healthy
+    networks:
+      - iot_network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    # Exposing exclusively the frontend interface to the host machine
+    ports:
+      - "3000:3000"
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    networks:
+      - iot_network
+
+networks:
+  iot_network:
+    driver: bridge
+
+volumes:
+  db_data:

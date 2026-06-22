@@ -1,0 +1,18 @@
+# =================================================================
+#  Grafana Automated Dashboard Provider - LSS Project
+#  This file provisions the directory scanning paths telling Grafana
+#  where to look for local JSON dashboard definition matrix files.
+# =================================================================
+
+apiVersion: 1
+
+providers:
+  - name: 'LSS Environmental Dashboards'
+    orgId: 1
+    folder: 'IoT Environmental System'
+    type: file
+    disableDeletion: true
+    editable: true
+    updateIntervalSeconds: 5 # Hot-reload modifications dynamically every 5 seconds
+    options:
+      path: /etc/grafana/provisioning/dashboards
